@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { FileText, FileDown, FileSpreadsheet, ChevronDown } from 'lucide-react';
+import { useUserStore } from '../../store/userStore';
 
 const ExportSummaryWidget: React.FC = () => {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const { cvs } = useUserStore();
 
   const handleExport = (type: string) => {
     const data = type === 'csv' 
-      ? "Type,Count\nSticky Notes,6\nEmail Blocks,4\nTasks,7\nEvents,25\n" 
-      : `Mock ${type.toUpperCase()} file content for TaskOrbit Summary.\n\nTotal Tasks: 7\nCompleted: 2`;
+      ? `Type,Count\nCandidate CVs,${cvs.length}\nEmail Blocks,4\nTasks,7\nEvents,25\n` 
+      : `Mock ${type.toUpperCase()} file content for TaskOrbit Summary.\n\nTotal CVs: ${cvs.length}\nTotal Tasks: 7`;
     
     const blob = new Blob([data], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -20,6 +22,10 @@ const ExportSummaryWidget: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
+  // Calculate dynamic percentage based on CVs length (just for visual scaling effect)
+  const cvPercentage = Math.min(100, Math.max(10, cvs.length * 15));
+  const gradient = `conic-gradient(#6366F1 0% ${cvPercentage}%, #10B981 ${cvPercentage}% 85%, #e5e7eb 85% 100%)`;
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
       <div className="flex items-center space-x-2 mb-6">
@@ -30,8 +36,8 @@ const ExportSummaryWidget: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-8 mb-8 flex-1">
         <div className="flex-1 space-y-3">
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Total Sticky Notes</span>
-            <span className="font-medium">6</span>
+            <span className="text-gray-600">Candidate CVs</span>
+            <span className="font-bold text-indigo-600">{cvs.length}</span>
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
@@ -45,18 +51,13 @@ const ExportSummaryWidget: React.FC = () => {
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Completed Tasks</span>
-            <span className="font-medium">2</span>
-          </div>
-          <hr className="border-gray-50" />
-          <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600">Total Events</span>
             <span className="font-medium">25</span>
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600">Generated On</span>
-            <span className="font-medium">May 21, 2025 11:30 AM</span>
+            <span className="font-medium">{new Date().toLocaleDateString()}</span>
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
@@ -73,33 +74,34 @@ const ExportSummaryWidget: React.FC = () => {
             {/* Header */}
             <div className="relative z-10 flex justify-between items-center mb-2">
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Analytics</span>
-              <span className="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full font-bold shadow-sm">+14%</span>
+              <span className="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full font-bold shadow-sm">Live</span>
             </div>
 
             {/* Charts Container */}
             <div className="relative z-10 flex items-end justify-between h-28 mt-auto px-1">
               {/* Donut Chart */}
               <div className="relative flex flex-col justify-end h-full">
-                <div className="w-14 h-14 rounded-full shadow-md relative overflow-hidden transition-transform duration-500 hover:scale-105 cursor-pointer ring-2 ring-white" style={{ background: 'conic-gradient(#6366F1 0% 60%, #10B981 60% 85%, #F59E0B 85% 100%)' }}>
-                  <div className="absolute inset-[4px] rounded-full bg-white shadow-inner flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-gray-700">60%</span>
+                <div className="w-14 h-14 rounded-full shadow-md relative overflow-hidden transition-transform duration-500 hover:scale-105 cursor-pointer ring-2 ring-white" style={{ background: gradient }}>
+                  <div className="absolute inset-[4px] rounded-full bg-white shadow-inner flex flex-col items-center justify-center">
+                    <span className="text-[10px] font-bold text-indigo-600 leading-tight">{cvs.length}</span>
+                    <span className="text-[6px] font-bold text-gray-400 uppercase tracking-wider leading-none">CVs</span>
                   </div>
                 </div>
               </div>
               
-              {/* Bar Charts */}
+              {/* Bar Charts (Scaled dynamically based on CV data for visual effect) */}
               <div className="flex items-end space-x-3 h-full pb-1">
                 <div className="group cursor-pointer flex flex-col items-center">
                   <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q1</span>
-                  <div className="w-4 h-12 bg-gradient-to-t from-blue-600 to-blue-400 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5"></div>
+                  <div className="w-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(48, cvs.length * 8 + 10)}px` }}></div>
                 </div>
                 <div className="group cursor-pointer flex flex-col items-center">
                   <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q2</span>
-                  <div className="w-4 h-20 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5"></div>
+                  <div className="w-4 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(80, cvs.length * 15 + 20)}px` }}></div>
                 </div>
                 <div className="group cursor-pointer flex flex-col items-center">
                   <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q3</span>
-                  <div className="w-4 h-10 bg-gradient-to-t from-indigo-500 to-indigo-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5"></div>
+                  <div className="w-4 bg-gradient-to-t from-indigo-500 to-indigo-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(40, cvs.length * 5 + 15)}px` }}></div>
                 </div>
               </div>
             </div>
