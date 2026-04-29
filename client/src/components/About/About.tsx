@@ -15,10 +15,6 @@ const About: React.FC = () => {
         </div>
         
         <div className="flex-1 text-center md:text-left">
-          <div className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-semibold tracking-wider uppercase mb-4 animate-fade-in">
-            About The Creator
-          </div>
-          
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
             Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#051C45] to-indigo-600 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.open('https://github.com/kAmmarah', '_blank')}>Ammara</span>
           </h1>
