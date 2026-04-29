@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import Header from './components/Header/Header';
-import Sidebar from './components/Sidebar/Sidebar';
+import Navbar from './components/Navbar/Navbar';
+import Footer from './components/Footer/Footer';
 import Dashboard from './components/Dashboard/Dashboard';
+import About from './components/About/About';
 import StickyNotesPage from './pages/StickyNotesPage';
 import TasksBoardPage from './pages/TasksBoardPage';
 import EventLogPage from './pages/EventLogPage';
@@ -81,24 +82,23 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-[#F8F9FA] overflow-hidden font-sans">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="flex flex-col min-h-screen bg-gray-100 font-sans">
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
       
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header />
-        
-        <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
-          {activeTab === 'dashboard' && <Dashboard />}
-          {activeTab === 'sticky-notes' && <StickyNotesPage />}
-          {activeTab === 'tasks-board' && <TasksBoardPage />}
-          {activeTab === 'event-log' && <EventLogPage />}
-          {activeTab === 'export-summary' && <ExportSummaryPage />}
-          {activeTab === 'users' && <UsersPage />}
-          {activeTab === 'email-blocks' && <EmailBlocksPage />}
-          {activeTab === 'links' && <LinksPage />}
-          {activeTab === 'settings' && <SettingsPage />}
-        </main>
-      </div>
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in">
+        {activeTab === 'about' && <About />}
+        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'sticky-notes' && <StickyNotesPage />}
+        {activeTab === 'tasks-board' && <TasksBoardPage />}
+        {activeTab === 'event-log' && <EventLogPage />}
+        {activeTab === 'export-summary' && <ExportSummaryPage />}
+        {activeTab === 'users' && <UsersPage />}
+        {activeTab === 'email-blocks' && <EmailBlocksPage />}
+        {activeTab === 'links' && <LinksPage />}
+        {activeTab === 'settings' && <SettingsPage />}
+      </main>
+
+      <Footer />
     </div>
   );
 }

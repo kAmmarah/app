@@ -1,7 +1,9 @@
-import React from 'react';
-import { FileText, FileDown, FileSpreadsheet } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileText, FileDown, FileSpreadsheet, ChevronDown } from 'lucide-react';
 
 const ExportSummaryWidget: React.FC = () => {
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+
   const handleExport = (type: string) => {
     const data = type === 'csv' 
       ? "Type,Count\nSticky Notes,6\nEmail Blocks,4\nTasks,7\nEvents,25\n" 
@@ -63,45 +65,87 @@ const ExportSummaryWidget: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-48 flex items-center justify-center">
-          <div className="w-full h-full min-h-[160px] bg-gray-50 rounded-lg p-4 flex flex-col justify-end relative shadow-inner border border-gray-100">
-            {/* Dummy chart graphic */}
-            <div className="absolute top-4 left-4 right-4 h-2 bg-gray-200 rounded-full"></div>
-            <div className="absolute top-8 left-4 right-8 h-2 bg-gray-200 rounded-full"></div>
-            <div className="absolute top-12 left-4 right-12 h-2 bg-gray-200 rounded-full"></div>
+        <div className="w-full sm:w-64 flex items-center justify-center">
+          <div className="w-full h-full min-h-[180px] bg-white rounded-xl p-5 flex flex-col justify-between relative shadow-sm border border-gray-100 overflow-hidden group">
+            {/* Background Grid Pattern */}
+            <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'linear-gradient(to right, #9ca3af 1px, transparent 1px), linear-gradient(to bottom, #9ca3af 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
             
-            <div className="flex items-end justify-between h-20 space-x-2 mt-auto">
-              <div className="w-8 h-8 rounded-full bg-[#FF9800] shrink-0 border-2 border-white shadow-sm self-end mb-1 z-10" style={{ clipPath: 'polygon(50% 50%, 100% 0, 100% 100%, 0 100%, 0 0)'}}></div>
-              <div className="w-3 h-10 bg-blue-400 rounded-t-sm"></div>
-              <div className="w-3 h-14 bg-green-400 rounded-t-sm"></div>
-              <div className="w-3 h-8 bg-blue-600 rounded-t-sm"></div>
+            {/* Header */}
+            <div className="relative z-10 flex justify-between items-center mb-2">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Analytics</span>
+              <span className="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full font-bold shadow-sm">+14%</span>
+            </div>
+
+            {/* Charts Container */}
+            <div className="relative z-10 flex items-end justify-between h-28 mt-auto px-1">
+              {/* Donut Chart */}
+              <div className="relative flex flex-col justify-end h-full">
+                <div className="w-14 h-14 rounded-full shadow-md relative overflow-hidden transition-transform duration-500 hover:scale-105 cursor-pointer ring-2 ring-white" style={{ background: 'conic-gradient(#6366F1 0% 60%, #10B981 60% 85%, #F59E0B 85% 100%)' }}>
+                  <div className="absolute inset-[4px] rounded-full bg-white shadow-inner flex items-center justify-center">
+                    <span className="text-[9px] font-bold text-gray-700">60%</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Bar Charts */}
+              <div className="flex items-end space-x-3 h-full pb-1">
+                <div className="group cursor-pointer flex flex-col items-center">
+                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q1</span>
+                  <div className="w-4 h-12 bg-gradient-to-t from-blue-600 to-blue-400 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5"></div>
+                </div>
+                <div className="group cursor-pointer flex flex-col items-center">
+                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q2</span>
+                  <div className="w-4 h-20 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5"></div>
+                </div>
+                <div className="group cursor-pointer flex flex-col items-center">
+                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q3</span>
+                  <div className="w-4 h-10 bg-gradient-to-t from-indigo-500 to-indigo-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="relative inline-block text-left mt-auto">
         <button 
-          onClick={() => handleExport('pdf')}
-          className="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
+          className="flex items-center justify-center space-x-2 w-full sm:w-auto px-5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          <FileText size={16} className="text-red-500" />
-          <span>Export as PDF</span>
+          <span>Export Options</span>
+          <ChevronDown size={16} className={`text-gray-500 transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`} />
         </button>
-        <button 
-          onClick={() => handleExport('xlsx')}
-          className="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          <FileSpreadsheet size={16} className="text-green-600" />
-          <span>Export as Excel</span>
-        </button>
-        <button 
-          onClick={() => handleExport('csv')}
-          className="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          <FileDown size={16} className="text-[#051C45]" />
-          <span>Export as CSV</span>
-        </button>
+
+        {isExportMenuOpen && (
+          <div className="absolute left-0 bottom-full mb-2 w-48 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 animate-fade-in origin-bottom-left">
+            <div className="p-1.5" role="menu" aria-orientation="vertical">
+              <button
+                onClick={() => { handleExport('pdf'); setIsExportMenuOpen(false); }}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors text-left"
+                role="menuitem"
+              >
+                <FileText size={16} className="text-rose-500" />
+                <span className="font-medium">Export as PDF</span>
+              </button>
+              <button
+                onClick={() => { handleExport('xlsx'); setIsExportMenuOpen(false); }}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors text-left"
+                role="menuitem"
+              >
+                <FileSpreadsheet size={16} className="text-emerald-600" />
+                <span className="font-medium">Export as Excel</span>
+              </button>
+              <button
+                onClick={() => { handleExport('csv'); setIsExportMenuOpen(false); }}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors text-left"
+                role="menuitem"
+              >
+                <FileDown size={16} className="text-indigo-600" />
+                <span className="font-medium">Export as CSV</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

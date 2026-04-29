@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { Plus, CheckCircle2, ListTodo, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Plus, CheckCircle2, ListTodo, Trash2, X } from 'lucide-react';
 import { useTaskStore } from '../../store/taskStore';
 import { v4 as uuidv4 } from 'uuid';
 
 const TasksBoardWidget: React.FC = () => {
   const { tasks, addTask, updateTaskStatus, deleteTask } = useTaskStore();
+  const [addingTo, setAddingTo] = useState<'todo' | 'in_progress' | 'done' | null>(null);
+  const [newTaskText, setNewTaskText] = useState('');
 
   useEffect(() => {
     if (tasks.length === 0) {
@@ -33,19 +35,23 @@ const TasksBoardWidget: React.FC = () => {
     }
   }, [tasks.length, addTask]);
 
-  const handleAddTask = (status: 'todo' | 'in_progress' | 'done') => {
-    const text = prompt("Enter task description:");
-    if (!text) return;
+  const handleAddTaskSubmit = (status: 'todo' | 'in_progress' | 'done') => {
+    if (!newTaskText.trim()) {
+      setAddingTo(null);
+      return;
+    }
     addTask({
       id: uuidv4(),
       nodeId: '',
-      content: text,
+      content: newTaskText.trim(),
       author: 'Admin',
       createdAt: new Date(),
       status: status,
       priority: 'medium',
       deadline: 'Pending'
     });
+    setNewTaskText('');
+    setAddingTo(null);
   };
 
   const todoTasks = tasks.filter(t => t.status === 'todo');
@@ -53,17 +59,17 @@ const TasksBoardWidget: React.FC = () => {
   const doneTasks = tasks.filter(t => t.status === 'done');
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
+    <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <ListTodo size={20} className="text-[#4338CA]" />
           <h2 className="text-lg font-bold text-gray-800">Tasks Board</h2>
         </div>
         <button 
-          onClick={() => handleAddTask('todo')}
-          className="flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+          onClick={() => setAddingTo('todo')}
+          className="flex items-center space-x-1 px-4 py-2 text-sm text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors font-medium"
         >
-          <Plus size={14} />
+          <Plus size={16} />
           <span>Add Task</span>
         </button>
       </div>
@@ -77,27 +83,45 @@ const TasksBoardWidget: React.FC = () => {
           </div>
           
           {todoTasks.map(task => (
-            <div key={task.id} className="bg-white border border-gray-100 shadow-sm rounded-lg p-4 flex flex-col space-y-3 cursor-pointer hover:shadow-md transition-shadow relative group" onClick={() => updateTaskStatus(task.id, 'in_progress')}>
+            <div key={task.id} className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 flex flex-col space-y-4 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group" onClick={() => updateTaskStatus(task.id, 'in_progress')}>
               <button 
                 onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}
-                className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-full p-1"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
               </button>
-              <p className="text-sm font-medium text-gray-800 pr-6">{task.content}</p>
-              <div className="flex items-center justify-between text-xs mt-auto">
-                <span className={`px-2 py-0.5 rounded ${
-                  task.priority === 'low' ? 'bg-green-100 text-green-700' :
-                  task.priority === 'high' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+              <p className="text-sm font-medium text-gray-800 pr-6 leading-relaxed">{task.content}</p>
+              <div className="flex items-center justify-between text-xs mt-auto pt-2 border-t border-gray-50">
+                <span className={`px-2.5 py-1 rounded-full font-medium ${
+                  task.priority === 'low' ? 'bg-teal-50 text-teal-600 border border-teal-100' :
+                  task.priority === 'high' ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-orange-50 text-orange-600 border border-orange-100'
                 }`}>
                   {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Medium'}
                 </span>
-                <span className="text-gray-500">{task.deadline}</span>
+                <span className="text-gray-400 font-medium">{task.deadline}</span>
               </div>
             </div>
           ))}
 
-          <button onClick={() => handleAddTask('todo')} className="flex items-center text-[#4338CA] text-sm font-medium mt-2 hover:underline">
+          {addingTo === 'todo' && (
+            <div className="bg-white border border-indigo-200 shadow-md rounded-2xl p-4 flex flex-col space-y-3">
+              <input
+                autoFocus
+                type="text"
+                placeholder="Task description..."
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAddTaskSubmit('todo'); }}
+              />
+              <div className="flex space-x-2">
+                <button onClick={() => handleAddTaskSubmit('todo')} className="flex-1 bg-indigo-600 text-white py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700">Add</button>
+                <button onClick={() => { setAddingTo(null); setNewTaskText(''); }} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"><X size={16} /></button>
+              </div>
+            </div>
+          )}
+
+          <button onClick={() => setAddingTo('todo')} className="flex items-center text-[#4338CA] text-sm font-medium mt-2 hover:underline">
             <Plus size={16} className="mr-1" /> Add Task
           </button>
         </div>
@@ -110,27 +134,45 @@ const TasksBoardWidget: React.FC = () => {
           </div>
           
           {inProgressTasks.map(task => (
-            <div key={task.id} className="bg-white border border-gray-100 shadow-sm rounded-lg p-4 flex flex-col space-y-3 cursor-pointer hover:shadow-md transition-shadow relative group" onClick={() => updateTaskStatus(task.id, 'done')}>
+            <div key={task.id} className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 flex flex-col space-y-4 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group" onClick={() => updateTaskStatus(task.id, 'done')}>
               <button 
                 onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}
-                className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-full p-1"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
               </button>
-              <p className="text-sm font-medium text-gray-800 pr-6">{task.content}</p>
-              <div className="flex items-center justify-between text-xs mt-auto">
-                <span className={`px-2 py-0.5 rounded ${
-                  task.priority === 'low' ? 'bg-green-100 text-green-700' :
-                  task.priority === 'high' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+              <p className="text-sm font-medium text-gray-800 pr-6 leading-relaxed">{task.content}</p>
+              <div className="flex items-center justify-between text-xs mt-auto pt-2 border-t border-gray-50">
+                <span className={`px-2.5 py-1 rounded-full font-medium ${
+                  task.priority === 'low' ? 'bg-teal-50 text-teal-600 border border-teal-100' :
+                  task.priority === 'high' ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-orange-50 text-orange-600 border border-orange-100'
                 }`}>
                   {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Medium'}
                 </span>
-                <span className="text-gray-500">{task.deadline}</span>
+                <span className="text-gray-400 font-medium">{task.deadline}</span>
               </div>
             </div>
           ))}
           
-          <button onClick={() => handleAddTask('in_progress')} className="flex items-center text-[#4338CA] text-sm font-medium mt-2 hover:underline">
+          {addingTo === 'in_progress' && (
+            <div className="bg-white border border-indigo-200 shadow-md rounded-2xl p-4 flex flex-col space-y-3">
+              <input
+                autoFocus
+                type="text"
+                placeholder="Task description..."
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAddTaskSubmit('in_progress'); }}
+              />
+              <div className="flex space-x-2">
+                <button onClick={() => handleAddTaskSubmit('in_progress')} className="flex-1 bg-indigo-600 text-white py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700">Add</button>
+                <button onClick={() => { setAddingTo(null); setNewTaskText(''); }} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"><X size={16} /></button>
+              </div>
+            </div>
+          )}
+          
+          <button onClick={() => setAddingTo('in_progress')} className="flex items-center text-[#4338CA] text-sm font-medium mt-2 hover:underline">
             <Plus size={16} className="mr-1" /> Add Task
           </button>
         </div>
@@ -143,22 +185,40 @@ const TasksBoardWidget: React.FC = () => {
           </div>
           
           {doneTasks.map(task => (
-            <div key={task.id} className="bg-white border border-gray-100 shadow-sm rounded-lg p-4 flex flex-col space-y-3 cursor-pointer hover:shadow-md transition-shadow relative group" onClick={() => updateTaskStatus(task.id, 'todo')}>
+            <div key={task.id} className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 flex flex-col space-y-4 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group opacity-75 hover:opacity-100" onClick={() => updateTaskStatus(task.id, 'todo')}>
               <button 
                 onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}
-                className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-full p-1"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
               </button>
-              <p className="text-sm font-medium text-gray-800 line-through pr-6">{task.content}</p>
-              <div className="flex items-center justify-between text-xs text-gray-500 mt-auto">
-                <span>{task.deadline}</span>
-                <CheckCircle2 size={16} className="text-green-500" />
+              <p className="text-sm font-medium text-gray-500 line-through pr-6 leading-relaxed">{task.content}</p>
+              <div className="flex items-center justify-between text-xs text-gray-400 mt-auto pt-2 border-t border-gray-50">
+                <span className="font-medium">{task.deadline}</span>
+                <CheckCircle2 size={18} className="text-emerald-500" />
               </div>
             </div>
           ))}
           
-          <button onClick={() => handleAddTask('done')} className="flex items-center text-[#4338CA] text-sm font-medium mt-2 hover:underline">
+          {addingTo === 'done' && (
+            <div className="bg-white border border-indigo-200 shadow-md rounded-2xl p-4 flex flex-col space-y-3">
+              <input
+                autoFocus
+                type="text"
+                placeholder="Task description..."
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAddTaskSubmit('done'); }}
+              />
+              <div className="flex space-x-2">
+                <button onClick={() => handleAddTaskSubmit('done')} className="flex-1 bg-indigo-600 text-white py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700">Add</button>
+                <button onClick={() => { setAddingTo(null); setNewTaskText(''); }} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"><X size={16} /></button>
+              </div>
+            </div>
+          )}
+          
+          <button onClick={() => setAddingTo('done')} className="flex items-center text-[#4338CA] text-sm font-medium mt-2 hover:underline">
             <Plus size={16} className="mr-1" /> Add Task
           </button>
         </div>
