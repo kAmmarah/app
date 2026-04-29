@@ -46,6 +46,43 @@ const About: React.FC = () => {
               View GitHub
             </a>
           </div>
+
+          <div className="mt-12 pt-8 border-t border-gray-100 animate-fade-in" style={{ animationDelay: '200ms' }}>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">About TaskOrbit</h3>
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              TaskOrbit is a next-generation real-time collaborative workspace designed to streamline team productivity. It integrates powerful tools into a single, unified premium dashboard:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 mr-3 shadow-sm shadow-indigo-200"></span> 
+                  Real-time Canvas
+                </h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Live, synchronized sticky notes and interactive workflow boards.</p>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-3 shadow-sm shadow-emerald-200"></span> 
+                  Smart Analytics
+                </h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Beautiful interactive donut charts, bar graphs, and exportable metrics.</p>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#051C45] mr-3 shadow-sm shadow-blue-200"></span> 
+                  HR & CV Hub
+                </h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Easily manage candidate tracking and structured data entry.</p>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 mr-3 shadow-sm shadow-rose-200"></span> 
+                  Email & Comms
+                </h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Draft, organize, and manage crucial email blocks effortlessly.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
