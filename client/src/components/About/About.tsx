@@ -19,18 +19,11 @@ const About: React.FC = () => {
             About The Creator
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            <a 
-              href="https://github.com/kAmmarah/app" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:text-indigo-600 hover:underline decoration-indigo-300 underline-offset-4 transition-all"
-            >
-              Ammara
-            </a>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#051C45] to-indigo-600 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.open('https://github.com/kAmmarah', '_blank')}>Ammara</span>
           </h1>
-          <h2 className="text-xl md:text-2xl font-medium text-gray-600 mb-6">
-            AI Web Developer & Founder
+          <h2 className="text-xl sm:text-2xl font-medium text-gray-600 mb-6">
+            AI Web Developer
           </h2>
           
           <p className="text-gray-600 text-lg leading-relaxed mb-8">
