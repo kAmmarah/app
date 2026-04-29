@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useUserStore } from '../../store/userStore';
+import { Home, FileText, Mail, ListTodo, Calendar, Link2, Download, Users, Settings, LayoutGrid, ChevronDown } from 'lucide-react';
 
 const Navbar: React.FC<{ activeTab: string, setActiveTab: (tab: string) => void }> = ({ activeTab, setActiveTab }) => {
   const { currentUser, setCurrentUser } = useUserStore();
+  const [isSeeAllOpen, setIsSeeAllOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const initials = currentUser?.name.substring(0, 2).toUpperCase() || 'AD';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsSeeAllOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'sticky-notes', label: 'Sticky Notes', icon: FileText },
+    { id: 'email-blocks', label: 'Email Blocks', icon: Mail },
+    { id: 'tasks-board', label: 'Tasks Board', icon: ListTodo },
+    { id: 'event-log', label: 'Event Log', icon: Calendar },
+    { id: 'links', label: 'Links', icon: Link2 },
+    { id: 'export-summary', label: 'Export Summary', icon: Download },
+    { id: 'users', label: 'Users', icon: Users },
+    { id: 'settings', label: 'Settings', icon: Settings }
+  ];
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all">
@@ -27,6 +52,38 @@ const Navbar: React.FC<{ activeTab: string, setActiveTab: (tab: string) => void 
               >
                 Dashboard
               </button>
+
+              <div className="relative inline-flex items-center" ref={dropdownRef}>
+                <button 
+                  onClick={() => setIsSeeAllOpen(!isSeeAllOpen)}
+                  className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors gap-1"
+                >
+                  <LayoutGrid size={16} />
+                  <span>See All</span>
+                  <ChevronDown size={14} className={`transition-transform ${isSeeAllOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isSeeAllOpen && (
+                   <div className="absolute top-full left-0 mt-2 w-56 rounded-xl shadow-2xl bg-[#0F172A] border border-gray-800 ring-1 ring-black ring-opacity-5 z-50 animate-fade-in overflow-hidden py-2">
+                      {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeTab === item.id;
+                        return (
+                          <button 
+                            key={item.id}
+                            onClick={() => { setActiveTab(item.id); setIsSeeAllOpen(false); }} 
+                            className={`flex items-center px-4 py-3 text-sm font-medium transition-all w-full text-left ${
+                              isActive ? 'bg-white text-gray-900 rounded-lg mx-2 w-[calc(100%-16px)] shadow-sm' : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                            }`}
+                          >
+                            <Icon size={18} className="mr-3 shrink-0" /> 
+                            {item.label}
+                          </button>
+                        );
+                      })}
+                   </div>
+                )}
+              </div>
               <button 
                 onClick={() => window.location.href='mailto:ammarah@example.com'}
                 className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
