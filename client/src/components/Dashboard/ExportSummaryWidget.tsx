@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { FileText, FileDown, FileSpreadsheet, ChevronDown } from 'lucide-react';
 import { useUserStore } from '../../store/userStore';
+import { useTaskStore } from '../../store/taskStore';
+import { useCanvasStore } from '../../store/canvasStore';
+import { useEventStore } from '../../store/eventStore';
 
 const ExportSummaryWidget: React.FC = () => {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
-  const { cvs } = useUserStore();
+  const { profiles } = useUserStore();
+  const { tasks } = useTaskStore();
+  const { nodes } = useCanvasStore();
+  const { events } = useEventStore();
+  
+  const notesCount = nodes.filter(n => n.type === 'sticky').length;
+  const tasksCount = tasks.length;
+  const eventsCount = events.length;
+  const profilesCount = profiles.length;
 
   const handleExport = (type: string) => {
     const data = type === 'csv' 
-      ? `Type,Count\nCandidate CVs,${cvs.length}\nEmail Blocks,4\nTasks,7\nEvents,25\n` 
-      : `Mock ${type.toUpperCase()} file content for TaskOrbit Summary.\n\nTotal CVs: ${cvs.length}\nTotal Tasks: 7`;
+      ? `Type,Count\nProfiles,${profilesCount}\nSticky Notes,${notesCount}\nEmail Blocks,4\nTasks,${tasksCount}\nEvents,${eventsCount}\n` 
+      : `Mock ${type.toUpperCase()} file content for TaskOrbit Summary.\n\nTotal Profiles: ${profilesCount}\nTotal Sticky Notes: ${notesCount}\nTotal Email Blocks: 4\nTotal Tasks: ${tasksCount}\nTotal Events: ${eventsCount}`;
     
     const blob = new Blob([data], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -22,8 +33,8 @@ const ExportSummaryWidget: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Calculate dynamic percentage based on CVs length (just for visual scaling effect)
-  const cvPercentage = Math.min(100, Math.max(10, cvs.length * 15));
+  // Calculate dynamic percentage based on profiles length (just for visual scaling effect)
+  const cvPercentage = Math.min(100, Math.max(10, profilesCount * 15));
   const gradient = `conic-gradient(#6366F1 0% ${cvPercentage}%, #10B981 ${cvPercentage}% 85%, #e5e7eb 85% 100%)`;
 
   return (
@@ -36,8 +47,13 @@ const ExportSummaryWidget: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-8 mb-8 flex-1">
         <div className="flex-1 space-y-3">
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Candidate CVs</span>
-            <span className="font-bold text-indigo-600">{cvs.length}</span>
+            <span className="text-gray-600">Profiles</span>
+            <span className="font-bold text-indigo-600">{profilesCount}</span>
+          </div>
+          <hr className="border-gray-50" />
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-gray-600">Total Sticky Notes</span>
+            <span className="font-medium">{notesCount}</span>
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
@@ -47,12 +63,12 @@ const ExportSummaryWidget: React.FC = () => {
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600">Total Tasks</span>
-            <span className="font-medium">7</span>
+            <span className="font-medium">{tasksCount}</span>
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600">Total Events</span>
-            <span className="font-medium">25</span>
+            <span className="font-medium">{eventsCount}</span>
           </div>
           <hr className="border-gray-50" />
           <div className="flex justify-between items-center text-sm">
@@ -83,25 +99,25 @@ const ExportSummaryWidget: React.FC = () => {
               <div className="relative flex flex-col justify-end h-full">
                 <div className="w-14 h-14 rounded-full shadow-md relative overflow-hidden transition-transform duration-500 hover:scale-105 cursor-pointer ring-2 ring-white" style={{ background: gradient }}>
                   <div className="absolute inset-[4px] rounded-full bg-white shadow-inner flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-bold text-indigo-600 leading-tight">{cvs.length}</span>
-                    <span className="text-[6px] font-bold text-gray-400 uppercase tracking-wider leading-none">CVs</span>
+                    <span className="text-[10px] font-bold text-indigo-600 leading-tight">{profilesCount}</span>
+                    <span className="text-[5px] font-bold text-gray-400 uppercase tracking-wider leading-none mt-0.5">PROFILES</span>
                   </div>
                 </div>
               </div>
               
-              {/* Bar Charts (Scaled dynamically based on CV data for visual effect) */}
+              {/* Bar Charts (Scaled dynamically based on data for visual effect) */}
               <div className="flex items-end space-x-3 h-full pb-1">
                 <div className="group cursor-pointer flex flex-col items-center">
-                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q1</span>
-                  <div className="w-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(48, cvs.length * 8 + 10)}px` }}></div>
+                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">TSK</span>
+                  <div className="w-4 bg-gradient-to-t from-blue-600 to-blue-400 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(80, tasksCount * 8 + 10)}px` }} title={`Tasks: ${tasksCount}`}></div>
                 </div>
                 <div className="group cursor-pointer flex flex-col items-center">
-                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q2</span>
-                  <div className="w-4 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(80, cvs.length * 15 + 20)}px` }}></div>
+                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">NTS</span>
+                  <div className="w-4 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(80, notesCount * 8 + 10)}px` }} title={`Notes: ${notesCount}`}></div>
                 </div>
                 <div className="group cursor-pointer flex flex-col items-center">
-                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">Q3</span>
-                  <div className="w-4 bg-gradient-to-t from-indigo-500 to-indigo-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(40, cvs.length * 5 + 15)}px` }}></div>
+                  <span className="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mb-1 -translate-y-1">PRO</span>
+                  <div className="w-4 bg-gradient-to-t from-indigo-500 to-indigo-300 rounded-sm shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-0.5" style={{ height: `${Math.min(80, profilesCount * 8 + 10)}px` }} title={`Profiles: ${profilesCount}`}></div>
                 </div>
               </div>
             </div>

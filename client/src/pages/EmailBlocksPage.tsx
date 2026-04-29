@@ -4,7 +4,7 @@ import { Mail, Plus, Search, MoreVertical, Edit2, Send, Trash2, Tag, Calendar, X
 const initialTemplates = [
   { id: 1, name: 'Welcome Onboarding', subject: "Welcome to TaskOrbit! Let's get started", category: 'Marketing', status: 'Active', date: 'May 24, 2025' },
   { id: 2, name: 'Weekly Update', subject: 'Your weekly progress report', category: 'Newsletters', status: 'Draft', date: 'May 20, 2025' },
-  { id: 3, name: 'Candidate Rejection', subject: 'Update on your application', category: 'Outreach', status: 'Active', date: 'May 18, 2025' },
+  { id: 3, name: 'Profile Rejection', subject: 'Update on your application', category: 'Outreach', status: 'Active', date: 'May 18, 2025' },
   { id: 4, name: 'Team Meeting Reminder', subject: 'Sync up tomorrow at 10 AM', category: 'Internal', status: 'Active', date: 'May 15, 2025' },
   { id: 5, name: 'New Feature Launch', subject: 'Introducing Smart Analytics!', category: 'Marketing', status: 'Draft', date: 'May 10, 2025' },
 ];

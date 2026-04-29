@@ -1,9 +1,10 @@
 import React from 'react';
+import { Trash2 } from 'lucide-react';
 import { useTaskStore } from '../../store/taskStore';
 import { useCanvasStore } from '../../store/canvasStore';
 
 const TaskBoard: React.FC = () => {
-  const { tasks } = useTaskStore();
+  const { tasks, deleteTask } = useTaskStore();
   const { setSelectedNode } = useCanvasStore();
 
   const todoTasks = tasks.filter(t => t.status === 'todo');
@@ -11,9 +12,15 @@ const TaskBoard: React.FC = () => {
   const doneTasks = tasks.filter(t => t.status === 'done');
 
   const TaskCard = ({ task }: any) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 mb-2 hover:shadow-md transition-shadow cursor-pointer"
+    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 mb-2 hover:shadow-md transition-shadow cursor-pointer relative group"
          onClick={() => setSelectedNode(task.nodeId)}>
-      <p className="text-sm text-gray-800 mb-2">{task.content}</p>
+      <button 
+        onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}
+        className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-full p-1"
+      >
+        <Trash2 size={14} />
+      </button>
+      <p className="text-sm text-gray-800 mb-2 pr-5">{task.content}</p>
       <div className="flex items-center justify-between text-xs text-gray-500">
         <span>{task.author}</span>
         {task.priority && (

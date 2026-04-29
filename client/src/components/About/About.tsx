@@ -68,7 +68,7 @@ const About: React.FC = () => {
                   <span className="w-2.5 h-2.5 rounded-full bg-[#051C45] mr-3 shadow-sm shadow-blue-200"></span> 
                   HR & CV Hub
                 </h4>
-                <p className="text-sm text-gray-500 leading-relaxed">Easily manage candidate tracking and structured data entry.</p>
+                <p className="text-sm text-gray-500 leading-relaxed">Easily manage profile tracking and structured data entry.</p>
               </div>
               <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <h4 className="font-bold text-gray-800 mb-2 flex items-center">

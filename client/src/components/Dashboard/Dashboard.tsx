@@ -2,7 +2,7 @@ import React from 'react';
 import StickyNotesWidget from './StickyNotesWidget';
 import TasksBoardWidget from './TasksBoardWidget';
 import ExportSummaryWidget from './ExportSummaryWidget';
-import CVsWidget from './CVsWidget';
+import ProfilesWidget from './ProfilesWidget';
 import { Calendar } from 'lucide-react';
 import { useUserStore } from '../../store/userStore';
 
@@ -36,7 +36,7 @@ const Dashboard: React.FC = () => {
           <StickyNotesWidget />
         </div>
         <div className="w-full">
-          <CVsWidget />
+          <ProfilesWidget />
         </div>
         <div className="w-full">
           <ExportSummaryWidget />
