@@ -1,6 +1,6 @@
 export interface CanvasNode {
   id: string;
-  type: 'sticky' | 'text' | 'shape' | 'drawing';
+  type: 'sticky' | 'text' | 'shape' | 'drawing' | 'image';
   position: { x: number; y: number };
   content: string;
   author: string;
@@ -9,6 +9,9 @@ export interface CanvasNode {
   acl: NodeACL;
   intent?: IntentType;
   intentData?: IntentExtractedData;
+  imageUrl?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface NodeACL {

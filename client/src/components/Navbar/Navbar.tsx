@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useUserStore } from '../../store/userStore';
-import { Home, FileText, Mail, ListTodo, Calendar, Link2, Download, Users, Settings, LayoutGrid, ChevronDown } from 'lucide-react';
+import { Home, FileText, Mail, ListTodo, Calendar, Link2, Download, Users, Settings, LayoutGrid, ChevronDown, Palette } from 'lucide-react';
 
 const Navbar: React.FC<{ activeTab: string, setActiveTab: (tab: string) => void }> = ({ activeTab, setActiveTab }) => {
   const { currentUser, setCurrentUser } = useUserStore();
@@ -27,7 +27,8 @@ const Navbar: React.FC<{ activeTab: string, setActiveTab: (tab: string) => void 
     { id: 'links', label: 'Links', icon: Link2 },
     { id: 'export-summary', label: 'Export Summary', icon: Download },
     { id: 'users', label: 'Users', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'drawing-board', label: 'Drawing Board', icon: Palette }
   ];
 
   return (

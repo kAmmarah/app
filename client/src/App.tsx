@@ -11,6 +11,7 @@ import UsersPage from './pages/UsersPage';
 import EmailBlocksPage from './pages/EmailBlocksPage';
 import LinksPage from './pages/LinksPage';
 import SettingsPage from './pages/SettingsPage';
+import DrawingBoardPage from './pages/DrawingBoardPage';
 import { useUserStore } from './store/userStore';
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
         {activeTab === 'email-blocks' && <EmailBlocksPage />}
         {activeTab === 'links' && <LinksPage />}
         {activeTab === 'settings' && <SettingsPage />}
+        {activeTab === 'drawing-board' && <DrawingBoardPage />}
       </main>
 
       <Footer />

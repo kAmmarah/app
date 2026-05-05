@@ -8,7 +8,7 @@ const shadowColors = ['shadow-[#FFDEE9]', 'shadow-[#E3FDF5]', 'shadow-[#E0C3FC]'
 
 const StickyNotesWidget: React.FC = () => {
   const { nodes, addNode, updateNode, deleteNode } = useCanvasStore();
-  const notes = nodes.filter(n => n.type === 'sticky');
+  const notes = nodes.filter(n => n.type === 'sticky' || n.type === 'image');
   
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -66,27 +66,36 @@ const StickyNotesWidget: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {notes.map((note, index) => (
-          <div key={note.id} className={`${bgColors[index % bgColors.length]} p-6 rounded-[2rem] rounded-tr-lg shadow-sm hover:shadow-lg ${shadowColors[index % shadowColors.length]}/50 hover:-translate-y-2 flex flex-col justify-between h-40 transition-all duration-300 relative group`}>
-            <div className="flex justify-between items-start h-full">
-              {editingId === note.id ? (
-                <textarea
-                  className="w-full h-full bg-transparent resize-none outline-none text-[15px] font-medium text-gray-800 leading-snug"
-                  value={note.content}
-                  onChange={(e) => updateNode(note.id, { content: e.target.value })}
-                  onBlur={() => setEditingId(null)}
-                  autoFocus
-                />
-              ) : (
-                <p 
-                  className="text-[15px] font-medium text-gray-800 leading-snug cursor-pointer flex-1 h-full"
-                  onClick={() => setEditingId(note.id)}
-                >
-                  {note.content}
-                </p>
-              )}
-              <button 
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 -mr-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {notes.map((note, index) => (
+            <div key={note.id} className={`${bgColors[index % bgColors.length]} p-6 rounded-[2rem] rounded-tr-lg shadow-sm hover:shadow-lg ${shadowColors[index % shadowColors.length]}/50 hover:-translate-y-2 flex flex-col justify-between h-48 transition-all duration-300 relative group`}>
+              <div className="flex justify-between items-start h-full">
+                {editingId === note.id && note.type !== 'image' ? (
+                  <textarea
+                    className="w-full h-full bg-transparent resize-none outline-none text-[15px] font-medium text-gray-800 leading-snug"
+                    value={note.content}
+                    onChange={(e) => updateNode(note.id, { content: e.target.value })}
+                    onBlur={() => setEditingId(null)}
+                    autoFocus
+                  />
+                ) : note.type === 'image' && note.imageUrl ? (
+                  <div className="flex-1 h-full flex flex-col items-center justify-center relative">
+                    <img 
+                      src={note.imageUrl} 
+                      alt="Drawing" 
+                      className="max-w-full max-h-[120px] object-contain rounded-md drop-shadow-sm" 
+                    />
+                  </div>
+                ) : (
+                  <p 
+                    className="text-[15px] font-medium text-gray-800 leading-snug cursor-pointer flex-1 h-full overflow-hidden text-ellipsis"
+                    onClick={() => setEditingId(note.id)}
+                  >
+                    {note.content}
+                  </p>
+                )}
+                <button 
                 onClick={(e) => { e.stopPropagation(); deleteNode(note.id); }}
                 className="text-gray-400 hover:text-red-500 transition-colors ml-2 opacity-0 group-hover:opacity-100 bg-white/50 p-1.5 rounded-full"
                 title="Delete Note"
@@ -97,9 +106,10 @@ const StickyNotesWidget: React.FC = () => {
             <div className="flex items-center space-x-1.5 text-xs font-semibold text-gray-700/60 mt-4">
               <Pin size={14} className="fill-current text-gray-700/40" />
               <span>{note.author}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
